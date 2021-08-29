@@ -1,0 +1,1 @@
+To request for Oxford Dictionaries by typescript.
