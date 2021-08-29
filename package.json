@@ -1,0 +1,16 @@
+{
+  "name": "oxdict",
+  "version": "0.0.1",
+  "description": "APIs too request oxford dictionaries.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "haniwa",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^16.7.5",
+    "typescript": "^4.4.2"
+  }
+}
