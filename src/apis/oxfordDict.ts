@@ -6,7 +6,11 @@ import {
     OxfordDictPort,
     TypeOxfordDictFields
 } from "../types/typeCommon";
-import {OxfordDictEntriesSourceLang, OxfordDictLemmasSourceLang} from "../types/typeSourceLang";
+import {
+    OxfordDictEntriesSourceLang,
+    OxfordDictLemmasSourceLang, OxfordDictSearchSourceLang,
+    OxfordDictSearchThesaurusSourceLang, OxfordDictSearchTranslationsSourceLang
+} from "../types/typeSourceLang";
 import {handleHttpsRequest} from "./handleHttpsRequest";
 
 export default class OxfordDict {
@@ -37,12 +41,12 @@ export default class OxfordDict {
     }
 
     private readonly entriesBasePath = "/api/v2/entries";
-    private generateEntriesPath = (sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean) => `${this.entriesBasePath}/${sourceLang}/${wordId}?fields=${fields}&strictMatch=${strictMatch}`;
-    public fetchEntries = (sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean) => {
+    private generateEntriesPath = ({sourceLang, wordId, fields, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean}) => `${this.entriesBasePath}/${sourceLang}/${wordId}?fields=${fields}&strictMatch=${strictMatch}`;
+    public fetchEntries = ({sourceLang, wordId, fields, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean}) => {
         const options = {
             host: this.host,
             port: this.port,
-            path: this.generateEntriesPath(sourceLang, wordId, fields, strictMatch),
+            path: this.generateEntriesPath({sourceLang, wordId, fields, strictMatch}),
             method: this.method,
             headers: this.generateHeaders(),
         }
@@ -50,12 +54,49 @@ export default class OxfordDict {
     }
 
     private readonly lemmasBasePath = "/api/v2/lemmas";
-    private generateLemmasPath = (sourceLang: OxfordDictLemmasSourceLang, wordId: string) => `${this.lemmasBasePath}/${sourceLang}/${wordId}`;
-    public fetchLemmas = (sourceLang: OxfordDictLemmasSourceLang, wordId: string) => {
+    private generateLemmasPath = ({sourceLang, wordId}: {sourceLang: OxfordDictLemmasSourceLang, wordId: string}) => `${this.lemmasBasePath}/${sourceLang}/${wordId}`;
+    public fetchLemmas = ({sourceLang, wordId}: {sourceLang: OxfordDictLemmasSourceLang, wordId: string}) => {
         const options = {
             host: this.host,
             port: this.port,
-            path: this.generateLemmasPath(sourceLang, wordId),
+            path: this.generateLemmasPath({sourceLang, wordId}),
+            method: this.method,
+            headers: this.generateHeaders(),
+        }
+        handleHttpsRequest(options);
+    }
+
+    private readonly searchBasePath = "/api/v2/lemmas";
+    private generateSearchThesaurusPath = ({sourceLang, q, limit, offset}: {sourceLang: OxfordDictSearchThesaurusSourceLang, q: string, limit?: number, offset?: number}) => `${this.searchBasePath}/thesaurus/${sourceLang}?q=${q}&limit=${limit}&offset=${offset}`;
+    public fetchSearchThesaurus = ({sourceLang, q, limit, offset}: {sourceLang: OxfordDictSearchThesaurusSourceLang, q: string, limit?: number, offset?: number}) => {
+        const options = {
+            host: this.host,
+            port: this.port,
+            path: this.generateSearchThesaurusPath({sourceLang, q, limit, offset}),
+            method: this.method,
+            headers: this.generateHeaders(),
+        }
+        handleHttpsRequest(options);
+    }
+
+    private generateSearchTranslationsPath = ({sourceLang, targetLang, q, limit, offset}: {sourceLang: OxfordDictSearchTranslationsSourceLang, targetLang: OxfordDictSearchTranslationsSourceLang, limit?: number, offset?: number}) => `${this.searchBasePath}/thesaurus/${sourceLang}/${targetLang}?q=${q}&limit=${limit}&offset=${offset}`;
+    public fetchSearchTranslations = ({sourceLang, targetLang, q, limit, offset}: {sourceLang: OxfordDictSearchTranslationsSourceLang, targetLang: OxfordDictSearchTranslationsSourceLang, limit?: number, offset?: number}) => {
+        const options = {
+            host: this.host,
+            port: this.port,
+            path: this.generateSearchTranslationsPath({sourceLang, targetLang, q, limit, offset}),
+            method: this.method,
+            headers: this.generateHeaders(),
+        }
+        handleHttpsRequest(options);
+    }
+
+    private generateSearchPath = ({sourceLang, q, prefix, limit, offset}: {sourceLang: OxfordDictSearchSourceLang, q: string, prefix?: boolean, limit?: number, offset?: number}) => `${this.searchBasePath}/thesaurus/${sourceLang}?q=${q}&prefix=${prefix}&limit=${limit}&offset=${offset}`;
+    public fetchSearch = ({sourceLang, q, prefix, limit, offset}: {sourceLang: OxfordDictSearchSourceLang, q: string, prefix?: boolean, limit?: number, offset?: number}) => {
+        const options = {
+            host: this.host,
+            port: this.port,
+            path: this.generateSearchPath({sourceLang, q, prefix, limit, offset}),
             method: this.method,
             headers: this.generateHeaders(),
         }
