@@ -9,7 +9,7 @@ import {
 import {
     OxfordDictEntriesSourceLang,
     OxfordDictLemmasSourceLang, OxfordDictSearchSourceLang,
-    OxfordDictSearchThesaurusSourceLang, OxfordDictSearchTranslationsSourceLang
+    OxfordDictSearchThesaurusSourceLang, OxfordDictSearchTranslationsSourceLang, OxfordDictTranslationsSourceLang
 } from "../types/typeSourceLang";
 import {handleHttpsRequest} from "./handleHttpsRequest";
 
@@ -66,7 +66,7 @@ export default class OxfordDict {
         handleHttpsRequest(options);
     }
 
-    private readonly searchBasePath = "/api/v2/lemmas";
+    private readonly searchBasePath = "/api/v2/search";
     private generateSearchThesaurusPath = ({sourceLang, q, limit, offset}: {sourceLang: OxfordDictSearchThesaurusSourceLang, q: string, limit?: number, offset?: number}) => `${this.searchBasePath}/thesaurus/${sourceLang}?q=${q}&limit=${limit}&offset=${offset}`;
     public fetchSearchThesaurus = ({sourceLang, q, limit, offset}: {sourceLang: OxfordDictSearchThesaurusSourceLang, q: string, limit?: number, offset?: number}) => {
         const options = {
@@ -102,4 +102,57 @@ export default class OxfordDict {
         }
         handleHttpsRequest(options);
     }
+
+    private readonly translationsBasePath = "/api/v2/translations";
+    private generateTranslationsPath = ({sourceLang, targetLang, wordId, strictMatch, grammaticalFeatures, lexicalFeatures, domains, registers}: {sourceLang: OxfordDictTranslationsSourceLang, targetLang: OxfordDictTranslationsSourceLang, wordId: string, strictMatch?: boolean, fields?: TypeOxfordDictFields, grammaticalFeatures?: string, lexicalFeatures?: string, domains?: string, registers?: string}) => `${this.translationsBasePath}/thesaurus/${sourceLang}/${targetLang}/${wordId}?strictMatch=${strictMatch}&grammaticalFeatures=${grammaticalFeatures}&lexicalFeatures=${lexicalFeatures}&domains=${domains}&registers=${registers}`;
+    public fetchTranslations = ({sourceLang, targetLang, wordId, strictMatch, grammaticalFeatures, lexicalFeatures, domains, registers}: {sourceLang: OxfordDictTranslationsSourceLang, targetLang: OxfordDictTranslationsSourceLang, wordId: string, strictMatch?: boolean, fields?: TypeOxfordDictFields, grammaticalFeatures?: string, lexicalFeatures?: string, domains?: string, registers?: string}) => {
+        const options = {
+            host: this.host,
+            port: this.port,
+            path: this.generateTranslationsPath({sourceLang, targetLang, wordId, strictMatch, grammaticalFeatures, lexicalFeatures, domains, registers}),
+            method: this.method,
+            headers: this.generateHeaders(),
+        }
+        handleHttpsRequest(options);
+    }
+
+    // TODO: sourceLangの型を定義して
+    // private readonly thesaurusBasePath = "/api/v2/thesaurus";
+    // private generateThesaurusPath = ({sourceLang, wordId, fields, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean}) => `${this.thesaurusBasePath}/${sourceLang}/${wordId}?fields=${fields}&strictMatch=${strictMatch}`;
+    // public fetchThesaurus = ({sourceLang, wordId, fields, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, fields: TypeOxfordDictFields, strictMatch: boolean}) => {
+    //     const options = {
+    //         host: this.host,
+    //         port: this.port,
+    //         path: this.generateThesaurusPath({sourceLang, wordId, fields, strictMatch}),
+    //         method: this.method,
+    //         headers: this.generateHeaders(),
+    //     }
+    //     return handleHttpsRequest(options);
+    // }
+
+    // private readonly sentencesBasePath = "/api/v2/sentences";
+    // private generateSentencesPath = ({sourceLang, wordId, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, strictMatch: boolean}) => `${this.sentencesBasePath}/${sourceLang}/${wordId}?strictMatch=${strictMatch}`;
+    // public fetchThesaurus = ({sourceLang, wordId, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, strictMatch: boolean}) => {
+    //     const options = {
+    //         host: this.host,
+    //         port: this.port,
+    //         path: this.generateSentencesPath({sourceLang, wordId, strictMatch}),
+    //         method: this.method,
+    //         headers: this.generateHeaders(),
+    //     }
+    //     return handleHttpsRequest(options);
+    // }
+    //
+    // private readonly wordsBasePath = "/api/v2/words";
+    // private generateWordsPath = ({sourceLang, wordId, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, strictMatch: boolean}) => `${this.sentencesBasePath}/${sourceLang}/${wordId}?strictMatch=${strictMatch}`;
+    // public fetchThesaurus = ({sourceLang, wordId, strictMatch}: {sourceLang: OxfordDictEntriesSourceLang, wordId: string, strictMatch: boolean}) => {
+    //     const options = {
+    //         host: this.host,
+    //         port: this.port,
+    //         path: this.generateSentencesPath({sourceLang, wordId, strictMatch}),
+    //         method: this.method,
+    //         headers: this.generateHeaders(),
+    //     }
+    //     return handleHttpsRequest(options);
+    // }
 }
